@@ -14,7 +14,7 @@ Este é um aplicativo Django para gerenciar notas de alunos da Turma A.
 
 1. Clone o repositório:
    ```
-   git clone https://github.com/seu-usuario/sistema-notas-escola.git
+   https://github.com/jonathandiasf/sistema-de-notas.git
    cd sistema-notas-escola
    ```
 
