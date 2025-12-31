@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+        <meta charset="UTF-8">
+        <title>Lista de Alunos - Turma A</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'alunos/style.css' %}">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+    <div class="container" data-first="{{ first_pk|default:'' }}" data-second="{{ second_pk|default:'' }}">
+            <header>
+                <h1>📘 Lista de Alunos - Turma A</h1>
+            </header>
+
+            <section class="form-card">
+                <h2>Adicionar aluno</h2>
+                <form method="post" id="addAlunoForm">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <label>Nome <input type="text" name="nome" required></label>
+                    </div>
+                    <div class="form-row">
+                        <label>Nota 1 <input type="number" name="nota1" step="0.01" min="0" max="10" required></label>
+                        <label>Nota 2 <input type="number" name="nota2" step="0.01" min="0" max="10" required></label>
+                        <label>Nota 3 <input type="number" name="nota3" step="0.01" min="0" max="10" required></label>
+                    </div>
+                    <div class="form-row actions">
+                        <button type="submit">Adicionar</button>
+                        <div class="preview">Média prevista: <span id="previewMedia">—</span></div>
+                    </div>
+                </form>
+            </section>
+
+            <section>
+                <h2>Todos os alunos</h2>
+
+                <div class="controls">
+                    <input id="search" placeholder="Buscar por nome..." aria-label="Buscar por nome">
+                    <select id="sortBy" aria-label="Ordenar por">
+                        <option value="media" selected>Ordenar: Média (maior)</option>
+                        <option value="nome">Ordenar: Nome (A → Z)</option>
+                    </select>
+                    <select id="filterBy" aria-label="Filtrar">
+                        <option value="all">Mostrar: Todos</option>
+                        <option value="aprovados">Aprovados</option>
+                        <option value="reprovados">Reprovados</option>
+                    </select>
+                    <label class="toggle">
+                      <input type="checkbox" id="toggleTop" checked>
+                      <span>Destacar top 2</span>
+                    </label>
+                </div>
+
+                <table class="alunos-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Nota 1</th>
+                            <th>Nota 2</th>
+                            <th>Nota 3</th>
+                            <th>Média</th>
+                            <th>Situação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for aluno in alunos %}
+                            <tr data-pk="{{ aluno.pk }}" data-media="{{ aluno.media }}" {% if aluno.pk == first_pk or aluno.pk == second_pk %}class="highlight"{% endif %}>
+                                <td class="nome-cell">
+                                    {% if aluno.pk == first_pk %}
+                                        <span class="badge top1" title="Média: {{ aluno.media }}">🏆 1º</span>
+                                    {% elif aluno.pk == second_pk %}
+                                        <span class="badge top2" title="Média: {{ aluno.media }}">🥈 2º</span>
+                                    {% endif %}
+                                    <span class="student-name">{{ aluno.nome }}</span>
+                                </td>
+                                <td class="nota">{{ aluno.nota1 }}</td>
+                                <td class="nota">{{ aluno.nota2 }}</td>
+                                <td class="nota">{{ aluno.nota3 }}</td>
+                                <td class="media">{{ aluno.media }}</td>
+                                <td class="situacao">{{ aluno.situacao }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="6">Nenhum aluno cadastrado.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+            <aside class="summary">
+                <h3>✅ Aprovados</h3>
+                <ul>
+                    {% for aluno in aprovados %}
+                        <li>{{ aluno.nome }} ({{ aluno.media }})</li>
+                    {% empty %}
+                        <li>Nenhum aprovado.</li>
+                    {% endfor %}
+                </ul>
+
+                <h3>❌ Reprovados</h3>
+                <ul>
+                    {% for aluno in reprovados %}
+                        <li>{{ aluno.nome }} ({{ aluno.media }})</li>
+                    {% empty %}
+                        <li>Nenhum reprovado.</li>
+                    {% endfor %}
+                </ul>
+            </aside>
+        </div>
+
+        <script>
+            // Small client-side preview of the average
+            const form = document.getElementById('addAlunoForm');
+            const preview = document.getElementById('previewMedia');
+
+            function calcPreview() {
+                const f = form;
+                const n1 = parseFloat(f.nota1.value || 0);
+                const n2 = parseFloat(f.nota2.value || 0);
+                const n3 = parseFloat(f.nota3.value || 0);
+                if (isNaN(n1) && isNaN(n2) && isNaN(n3)) {
+                    preview.textContent = '—';
+                    return;
+                }
+                const m = ((n1 || 0) + (n2 || 0) + (n3 || 0)) / 3;
+                preview.textContent = Math.round(m * 100) / 100;
+            }
+
+            form.addEventListener('input', calcPreview);
+            window.addEventListener('load', calcPreview);
+
+            // Interaction: search, sort, filter, toggle top highlight
+            (function () {
+                const container = document.querySelector('.container');
+                const firstPk = container.dataset.first || null;
+                const secondPk = container.dataset.second || null;
+
+                const tbody = document.querySelector('.alunos-table tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+
+                const search = document.getElementById('search');
+                const sortBy = document.getElementById('sortBy');
+                const filterBy = document.getElementById('filterBy');
+                const toggleTop = document.getElementById('toggleTop');
+
+                function getRowData(r) {
+                    return {
+                        pk: r.dataset.pk || null,
+                        nome: (r.querySelector('.student-name') && r.querySelector('.student-name').textContent.trim()) || '',
+                        media: parseFloat(r.dataset.media || r.querySelector('.media')?.textContent || 0),
+                        situacao: (r.querySelector('.situacao') && r.querySelector('.situacao').textContent.trim()) || ''
+                    };
+                }
+
+                function renderRows(list) {
+                    // clear tbody
+                    tbody.innerHTML = '';
+                    if (!list.length) {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = '<td colspan="6">Nenhum aluno encontrado.</td>';
+                        tbody.appendChild(tr);
+                        return;
+                    }
+                    list.forEach(r => tbody.appendChild(r));
+                }
+
+                function applyFilterAndSort() {
+                    let visible = rows.slice();
+                    const q = search.value.trim().toLowerCase();
+                    if (q) visible = visible.filter(r => getRowData(r).nome.toLowerCase().includes(q));
+
+                    const filter = filterBy.value;
+                    if (filter === 'aprovados') visible = visible.filter(r => getRowData(r).media >= 7);
+                    if (filter === 'reprovados') visible = visible.filter(r => getRowData(r).media < 7);
+
+                    const sort = sortBy.value;
+                    if (sort === 'media') {
+                        visible.sort((a, b) => parseFloat(b.dataset.media || 0) - parseFloat(a.dataset.media || 0));
+                    } else if (sort === 'nome') {
+                        visible.sort((a, b) => getRowData(a).nome.localeCompare(getRowData(b).nome));
+                    }
+
+                    // reapply highlight if toggle is on
+                    if (toggleTop.checked && (firstPk || secondPk)) {
+                        visible.forEach(r => {
+                            if (r.dataset.pk === firstPk || r.dataset.pk === secondPk) {
+                                r.classList.add('highlight');
+                            } else {
+                                r.classList.remove('highlight');
+                            }
+                        });
+                    } else {
+                        visible.forEach(r => r.classList.remove('highlight'));
+                    }
+
+                    renderRows(visible);
+                }
+
+                search.addEventListener('input', applyFilterAndSort);
+                sortBy.addEventListener('change', applyFilterAndSort);
+                filterBy.addEventListener('change', applyFilterAndSort);
+                toggleTop.addEventListener('change', applyFilterAndSort);
+
+                // initial render
+                applyFilterAndSort();
+            })();
+        </script>
+</body>
+</html>

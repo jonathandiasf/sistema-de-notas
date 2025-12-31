@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+        <meta charset="UTF-8">
+        <title>Sistema de notas da Escola</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'alunos/style.css' %}">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+    <div class="container" style="display: flex; flex-direction: column; align-items: center; grid-template-columns: none;">
+            <header>
+                <h1>🏫 Sistema de notas da Escola</h1>
+            </header>
+
+            <div class="neon-card">
+                <a href="{% url 'lista_alunos' %}" class="button">Acessar Lista de Alunos</a>
+            </div>
+        </div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+:root{
+  /* gradient background variables */
+  --bg-start: #07133a; /* deep navy */
+  --bg-end:   #9fd1ff; /* light sky blue */
+  --card-bg: rgba(255,255,255,0.06);
+  --card-border: rgba(255,255,255,0.08);
+  --text: #e8f6ff;
+  --muted: rgba(232,246,255,0.8);
+  --accent: #60a5fa;
+  --success: #34d399;
+  --danger: #fb7185;
+}
+
+*{box-sizing:border-box;font-family: Inter, Roboto, Arial, sans-serif}
+body{background:linear-gradient(180deg,var(--bg-start),var(--bg-end));margin:0;padding:24px;color:var(--text);min-height:100vh}
+.container{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 320px;gap:20px}
+header h1{margin:0 0 8px;text-align:center}
+.form-card{background:var(--card-bg);padding:16px;border-radius:8px;border:1px solid var(--card-border);backdrop-filter: blur(6px)}
+.form-row{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.form-row label{flex:1;display:flex;flex-direction:column;font-size:14px;color:var(--muted)}
+.form-row input{margin-top:6px;padding:8px;border:1px solid rgba(255,255,255,0.12);border-radius:6px;background:transparent;color:var(--text)}
+.form-row.actions{align-items:center;justify-content:space-between}
+.form-row.actions button{background:var(--accent);color:#07203b;padding:8px 14px;border:none;border-radius:6px;cursor:pointer}
+.button{background:var(--accent);color:#07203b;padding:8px 14px;border:none;border-radius:6px;text-decoration:none;display:inline-block}
+.neon-card{background:var(--card-bg);padding:20px;border-radius:8px;border:1px solid white;box-shadow:0 0 10px white, 0 0 20px white, 0 0 30px white;backdrop-filter:blur(6px);margin:20px auto;max-width:400px;text-align:center;transition:box-shadow .3s ease}
+.neon-card:hover{box-shadow:0 0 20px white, 0 0 40px white, 0 0 60px white}
+.alunos-table{width:100%;border-collapse:collapse;background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;overflow:hidden}
+.alunos-table th,.alunos-table td{padding:10px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text)}
+.alunos-table thead th{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));font-weight:600;color:var(--text)}
+.summary{background:var(--card-bg);padding:16px;border-radius:8px;border:1px solid var(--card-border)}
+.preview{color:var(--muted);font-size:14px}
+@media(max-width:900px){.container{grid-template-columns:1fr;}}
+
+/* Highlight top students */
+.alunos-table tr.highlight{background:linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;margin-right:8px;color:#07203b}
+.badge.top1{background:#ffd86b}
+.badge.top2{background:#cfe3ff}
+
+/* Controls */
+.controls{display:flex;gap:8px;align-items:center;margin:12px 0 14px}
+.controls input[type="text"], .controls select{padding:8px;border:1px solid rgba(255,255,255,0.08);border-radius:6px;background:transparent;color:var(--text)}
+.controls input#search{flex:1;min-width:140px}
+.toggle{display:inline-flex;gap:8px;align-items:center;font-size:14px;color:var(--muted)}
+
+/* Situacao labels */
+.situacao{font-weight:600}
+.situacao.aprovado{color: var(--success)}
+.situacao.reprovado{color: var(--danger)}
+
+/* Row hover / zebra */
+.alunos-table tbody tr:nth-child(odd){background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02))}
+.alunos-table tbody tr:hover{transform:translateX(4px);transition:transform .12s ease}
+
+/* Name emphasis for highlighted rows */
+.alunos-table tr.highlight .student-name{font-weight:700;color:#02142a}
+.student-name{color:var(--text)}
+
+/* Make badges a bit nicer */
+.badge{font-weight:700}
+.badge.top1{box-shadow:0 4px 14px rgba(255,216,107,0.12)}
+.badge.top2{box-shadow:0 4px 14px rgba(207,227,255,0.12)}
