@@ -1,4 +1,4 @@
-# Sistema de Notas da Escola da Cidade
+# Sistema de Notas 
 
 Este é um aplicativo Django para gerenciar notas de alunos da Turma A.
 
