@@ -39,8 +39,6 @@ Este é um aplicativo Django para gerenciar notas de alunos da Turma A.
    python manage.py runserver
    ```
 
-Acesse http://127.0.0.1:8000/ no navegador.
-
 ## Estrutura do Projeto
 
 - `escola_alunos_app/`: Configurações principais do Django
